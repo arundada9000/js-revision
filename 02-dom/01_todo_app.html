@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App — DOM Practice</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #111b2f;
+      --border: #1e2d45;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #6366f1;
+      --done: #22c55e;
+      --surface: #1a2740;
+      --radius: 12px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 3rem 1rem;
+    }
+    .container {
+      width: 100%;
+      max-width: 540px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      background: linear-gradient(135deg, #e2e8f0, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #4f46e5;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-sm:hover {
+      background: var(--hover, #1e3050);
+      color: var(--text);
+    }
+    .btn-sm.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+    #taskList {
+      list-style: none;
+    }
+    #taskList li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #taskList li:hover {
+      border-color: #3b4f6b;
+    }
+    #taskList li.done {
+      text-decoration: line-through;
+      opacity: 0.6;
+      border-color: var(--done);
+    }
+    #taskList li.done button {
+      text-decoration: none;
+    }
+    #taskList li button {
+      background: transparent;
+      border: 1px solid #991b1b;
+      color: #f87171;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #taskList li button:hover {
+      background: #991b1b;
+      color: #fff;
+    }
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 2rem 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Todo App</h1>
+    <p class="subtitle">DOM manipulation practice — add, toggle, filter, delete</p>
+
+    <div class="card">
+      <div class="input-row">
+        <input id="taskInput" type="text" placeholder="Enter a task..." />
+        <button id="addBtn" class="btn btn-primary">Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="filter-row">
+        <button id="showAll" class="btn btn-sm active">All</button>
+        <button id="showActive" class="btn btn-sm">Active</button>
+        <button id="showCompleted" class="btn btn-sm">Completed</button>
+      </div>
+      <ul id="taskList"></ul>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById("taskInput");
+    const addBtn = document.getElementById("addBtn");
+    const showAll = document.getElementById("showAll");
+    const showActive = document.getElementById("showActive");
+    const showCompleted = document.getElementById("showCompleted");
+    const taskList = document.getElementById("taskList");
+
+    let tasks = [];
+    let nextId = 1;
+    let currentFilter = "all";
+
+    function updateFilterButtons() {
+      [showAll, showActive, showCompleted].forEach((btn) => btn.classList.remove("active"));
+      if (currentFilter === "all") showAll.classList.add("active");
+      else if (currentFilter === "active") showActive.classList.add("active");
+      else showCompleted.classList.add("active");
+    }
+
+    function addTask() {
+      const text = input.value.trim();
+      if (!text) {
+        alert("Please enter a task.");
+        return;
+      }
+      tasks.push({ id: nextId++, text, completed: false });
+      input.value = "";
+      applyFilter();
+    }
+
+    function toggleTask(id) {
+      tasks = tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      );
+      applyFilter();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter((task) => task.id !== id);
+      applyFilter();
+    }
+
+    function applyFilter() {
+      let filtered = tasks;
+      if (currentFilter === "active") filtered = tasks.filter((t) => !t.completed);
+      else if (currentFilter === "completed") filtered = tasks.filter((t) => t.completed);
+      displayTasks(filtered);
+      updateFilterButtons();
+    }
+
+    function displayTasks(filtered) {
+      taskList.innerHTML = "";
+
+      if (filtered.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No tasks available";
+        taskList.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach((task) => {
+        const li = document.createElement("li");
+        li.textContent = task.text;
+        li.id = task.id;
+        if (task.completed) li.classList.add("done");
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteTask(task.id);
+        });
+
+        li.addEventListener("click", () => toggleTask(task.id));
+        li.appendChild(delBtn);
+        taskList.appendChild(li);
+      });
+    }
+
+    // Event listeners
+    addBtn.addEventListener("click", addTask);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") addTask();
+    });
+
+    showAll.addEventListener("click", () => {
+      currentFilter = "all";
+      applyFilter();
+    });
+    showActive.addEventListener("click", () => {
+      currentFilter = "active";
+      applyFilter();
+    });
+    showCompleted.addEventListener("click", () => {
+      currentFilter = "completed";
+      applyFilter();
+    });
+
+    applyFilter();
+    console.log("Todo app ready!");
+  </script>
+</body>
+</html>
