@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Event Propagation Explorer — Enhanced</title>
+
+    <style>
+        :root {
+            --bg: #0b1120;
+            --card: #111b2f;
+            --border: #1e2d45;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #6366f1;
+            --capture: #38bdf8;
+            --capture-glow: #0c4a6e;
+            --target: #22c55e;
+            --target-glow: #14532d;
+            --bubble: #f59e0b;
+            --bubble-glow: #78350f;
+            --surface: #1a2740;
+            --hover: #1e3050;
+            --radius: 14px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 1.5rem;
+            min-height: 100vh;
+            line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 30% 20%, rgba(56, 189, 248, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 60%, rgba(245, 158, 11, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 80%, rgba(34, 197, 94, 0.03) 0%, transparent 60%);
+        }
+
+        /* ── Typography ───────────────────── */
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, #e2e8f0 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+
+        h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #c7d2fe;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ── Layout ──────────────────────── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Cards ───────────────────────── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 16px;
+            backdrop-filter: blur(4px);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: #2d3d5c;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── Controls Bar ────────────────── */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .control-group label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .control-group input[type="checkbox"] {
+            accent-color: var(--accent);
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .control-group input[type="range"] {
+            accent-color: var(--accent);
+            cursor: pointer;
+            width: 80px;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .badge-capture {
+            background: var(--capture-glow);
+            color: var(--capture);
+        }
+
+        .badge-target {
+            background: var(--target-glow);
+            color: var(--target);
+        }
+
+        .badge-bubble {
+            background: var(--bubble-glow);
+            color: var(--bubble);
+        }
+
+        /* ── Buttons ─────────────────────── */
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover);
+            border-color: #3b4f6b;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            padding: 4px 10px;
+            font-size: 0.78rem;
+        }
+
+        .btn-ghost:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        .btn-step {
+            background: #1e3a5f;
+            color: #7dd3fc;
+            border: 1px solid #1e4a6e;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .btn-step:hover {
+            background: #1e4a6e;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-step:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ── Playground ──────────────────── */
+        .playground-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+            min-height: 520px;
+            position: relative;
+        }
+
+        .box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 18px;
+            transition: box-shadow 0.25s, transform 0.2s;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+
+        .box:hover {
+            transform: scale(1.01);
+        }
+
+        .box:active {
+            transform: scale(0.985);
+        }
+
+        .grandparent {
+            width: 480px;
+            height: 480px;
+            background: linear-gradient(135deg, #7f1d1d 0%, #5c1010 100%);
+            border: 2px solid #991b1b;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .parent {
+            width: 340px;
+            height: 340px;
+            background: linear-gradient(135deg, #92400e 0%, #6b2f0a 100%);
+            border: 2px solid #b45309;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .child {
+            width: 210px;
+            height: 210px;
+            background: linear-gradient(135deg, #365314 0%, #1f3508 100%);
+            border: 2px solid #4d7c0f;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .target-btn {
+            width: 110px;
+            height: 110px;
+            border: none;
+            background: linear-gradient(135deg, #0369a1 0%, #014b73 100%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #38bdf8;
+            letter-spacing: 0.03em;
+            transition: all 0.25s;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .target-btn:hover {
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.5);
+            border-color: #7dd3fc;
+            transform: scale(1.06);
+        }
+
+        /* ── Label badges on boxes ───────── */
+        .box-label {
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0.7;
+            pointer-events: none;
+            letter-spacing: 0.02em;
+        }
+
+        .hit-counter {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 9px;
+            border-radius: 10px;
+            pointer-events: none;
+            opacity: 0.75;
+            letter-spacing: 0.03em;
+        }
+
+        /* ── Phase glows ─────────────────── */
+        .capture-active {
+            box-shadow:
+                0 0 50px var(--capture),
+                0 0 100px rgba(56, 189, 248, 0.5),
+                inset 0 0 30px rgba(56, 189, 248, 0.15) !important;
+            border-color: var(--capture) !important;
+            z-index: 3;
+        }
+
+        .target-active {
+            box-shadow:
+                0 0 50px var(--target),
+                0 0 100px rgba(34, 197, 94, 0.5),
+                inset 0 0 30px rgba(34, 197, 94, 0.15) !important;
+            border-color: var(--target) !important;
+            z-index: 3;
+        }
+
+        .bubble-active {
+            box-shadow:
+                0 0 50px var(--bubble),
+                0 0 100px rgba(245, 158, 11, 0.5),
+                inset 0 0 30px rgba(245, 158, 11, 0.15) !important;
+            border-color: var(--bubble) !important;
+            z-index: 3;
+        }
+
+        /* ── Ripple on target ────────────── */
+        .ripple {
+            animation: ripple-out 0.6s ease-out forwards;
+        }
+
+        @keyframes ripple-out {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7), 0 0 30px var(--target);
+            }
+
+            100% {
+                box-shadow: 0 0 0 50px rgba(34, 197, 94, 0), 0 0 60px var(--target);
+            }
+        }
+
+        /* ── Propagation Path Diagram ────── */
+        .path-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 14px 8px;
+            font-size: 0.78rem;
+            min-height: 50px;
+        }
+
+        .path-node {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.02em;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .path-arrow {
+            color: #64748b;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .path-node.highlight-capture {
+            border-color: var(--capture);
+            background: var(--capture-glow);
+            color: var(--capture);
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
+        }
+
+        .path-node.highlight-target {
+            border-color: var(--target);
+            background: var(--target-glow);
+            color: var(--target);
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.4);
+        }
+
+        .path-node.highlight-bubble {
+            border-color: var(--bubble);
+            background: var(--bubble-glow);
+            color: var(--bubble);
+            box-shadow: 0 0 18px rgba(245, 158, 11, 0.4);
+        }
+
+        /* ── Timeline / Log ──────────────── */
+        .log-container {
+            max-height: 380px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding-right: 4px;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        .log-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slide-in 0.25s ease-out;
+            letter-spacing: 0.01em;
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateX(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-capture {
+            background: #0c4a6e;
+            border-left: 3px solid var(--capture);
+        }
+
+        .log-target {
+            background: #14532d;
+            border-left: 3px solid var(--target);
+        }
+
+        .log-bubble {
+            background: #78350f;
+            border-left: 3px solid var(--bubble);
+        }
+
+        .log-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .log-icon.cap {
+            background: var(--capture);
+        }
+
+        .log-icon.tar {
+            background: var(--target);
+        }
+
+        .log-icon.bub {
+            background: var(--bubble);
+        }
+
+        .log-time {
+            font-size: 0.65rem;
+            color: #64748b;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        /* ── Inspector Table ─────────────── */
+        .inspector-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+        }
+
+        .inspector-table td {
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .inspector-table td:first-child {
+            color: var(--muted);
+            font-weight: 500;
+            white-space: nowrap;
+            width: 120px;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .inspector-table td:last-child {
+            font-weight: 600;
+            font-family: 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 0.8rem;
+        }
+
+        .highlight-val {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        /* ── Listener Toggles ────────────── */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .toggle-row span {
+            font-weight: 500;
+        }
+
+        .toggle-pair {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mini-toggle {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .mini-toggle.active-cap {
+            border-color: var(--capture);
+            background: var(--capture-glow);
+            color: var(--capture);
+        }
+
+        .mini-toggle.active-bub {
+            border-color: var(--bubble);
+            background: var(--bubble-glow);
+            color: var(--bubble);
+        }
+
+        .mini-toggle input {
+            display: none;
+        }
+
+        /* ── Event Delegation List ───────── */
+        #list li {
+            padding: 10px 14px;
+            margin-bottom: 5px;
+            background: var(--surface);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            list-style: none;
+            font-weight: 500;
+            font-size: 0.88rem;
+            border: 1px solid transparent;
+        }
+
+        #list li:hover {
+            background: var(--hover);
+            border-color: #3b4f6b;
+        }
+
+        #list li:active {
+            background: #1e3a5f;
+            border-color: var(--accent);
+        }
+
+        /* ── PreventDefault link ─────────── */
+        #demoLink {
+            color: #7dd3fc;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        #demoLink:hover {
+            color: #bae6fd;
+        }
+
+        /* ── Step indicator ──────────────── */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            padding: 6px 12px;
+            background: var(--surface);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ── Legend ──────────────────────── */
+        .legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+
+        /* ── Pre blocks ──────────────────── */
+        pre {
+            background: #0d1525;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+            font-family: 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+            line-height: 1.7;
+            color: #cbd5e1;
+            margin: 8px 0;
+        }
+
+        /* ── Keyboard hints ──────────────── */
+        .kbd {
+            display: inline-block;
+            padding: 2px 7px;
+            font-size: 0.68rem;
+            font-family: 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+            background: #1e2d45;
+            border: 1px solid #3b4f6b;
+            border-radius: 4px;
+            color: #94a3b8;
+            margin: 0 2px;
+        }
+
+        /* ── Section divider ─────────────── */
+        .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748b;
+            margin: 12px 0 6px;
+            font-weight: 700;
+        }
+
+        /* ── Toast ───────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            z-index: 100;
+            animation: toast-in 0.3s ease-out, toast-out 0.3s 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes toast-in {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes toast-out {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>⚡ Event Propagation Explorer</h1>
+    <p class="subtitle">Interactive visual guide to DOM event flow — Capture · Target · Bubble</p>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- GLOBAL CONTROLS                       -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="controls-bar">
+        <div class="control-group">
+            <label for="speedSlider">🐢 Speed</label>
+            <input type="range" id="speedSlider" min="0" max="500" value="80" step="10">
+            <span id="speedLabel" style="font-size:0.75rem;min-width:36px;">80ms</span>
+        </div>
+        <div class="control-group">
+            <input type="checkbox" id="stepMode">
+            <label for="stepMode">👣 Step Mode</label>
+        </div>
+        <div class="control-group">
+            <input type="checkbox" id="stopPropagation">
+            <label for="stopPropagation">🛑 stopPropagation()</label>
+        </div>
+        <div class="control-group">
+            <input type="checkbox" id="preventDefault">
+            <label for="preventDefault">🚫 preventDefault()</label>
+        </div>
+        <button id="clear" class="btn-secondary">🗑 Clear Timeline</button>
+        <button id="resetCounters" class="btn-ghost">↺ Reset Counters</button>
+    </div>
+    <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--capture)"></span> Capture</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--target)"></span> Target</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--bubble)"></span> Bubble</span>
+        <span style="font-size:0.7rem;color:#64748b;">Keys: <span class="kbd">C</span> clear &nbsp;<span
+                class="kbd">S</span>
+            step &nbsp;<span class="kbd">R</span> reset</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- MAIN GRID                             -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="main-grid">
+
+        <!-- ── LEFT COLUMN ────────────────── -->
+        <div>
+
+            <!-- Playground -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🎯 Propagation Playground</h2>
+                    <span style="font-size:0.75rem;color:var(--muted);">Click anywhere inside the boxes</span>
+                </div>
+                <div class="playground-wrapper">
+                    <div class="box grandparent" id="grandparent">
+                        <span class="box-label">Grandparent</span>
+                        <span class="hit-counter" id="hit-grandparent">0</span>
+                        <div class="box parent" id="parent">
+                            <span class="box-label">Parent</span>
+                            <span class="hit-counter" id="hit-parent">0</span>
+                            <div class="box child" id="child">
+                                <span class="box-label">Child</span>
+                                <span class="hit-counter" id="hit-child">0</span>
+                                <button class="target-btn" id="target">
+                                    CLICK<br>ME
+                                </button>
+                                <span class="hit-counter" id="hit-target"
+                                    style="top:auto;bottom:12px;right:auto;left:50%;transform:translateX(-50%);">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Propagation Path Diagram -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🗺 Propagation Path</h2>
+                    <span id="pathStepInfo" style="font-size:0.75rem;color:var(--muted);">Click to see the flow</span>
+                </div>
+                <div class="path-diagram" id="pathDiagram">
+                    <span class="path-node" data-path="grandparent-cap">Grandparent</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-node" data-path="parent-cap">Parent</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-node" data-path="child-cap">Child</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-node" data-path="target">🎯 Target</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-node" data-path="child-bub">Child</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-node" data-path="parent-bub">Parent</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-node" data-path="grandparent-bub">Grandparent</span>
+                </div>
+            </div>
+
+            <!-- Event Delegation + preventDefault -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="card">
+                    <h2>📋 Event Delegation</h2>
+                    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">
+                        One listener on <code>&lt;ul&gt;</code>. New items work automatically.
+                    </p>
+                    <ul id="list">
+                        <li data-id="1">📦 Item 1</li>
+                        <li data-id="2">📦 Item 2</li>
+                        <li data-id="3">📦 Item 3</li>
+                    </ul>
+                    <button class="btn-primary" id="addItem" style="margin-top:8px;">＋ Add Item</button>
+                </div>
+                <div class="card">
+                    <h2>🚫 preventDefault Demo</h2>
+                    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">
+                        Toggle the checkbox above to block navigation.
+                    </p>
+                    <a id="demoLink" href="https://example.com" target="_blank" rel="noopener">
+                        🔗 Navigate to example.com
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── RIGHT COLUMN ───────────────── -->
+        <div>
+
+            <!-- Step Controls -->
+            <div class="card" id="stepControlsCard" style="display:none;">
+                <div class="card-header">
+                    <h2>👣 Step Controls</h2>
+                    <span class="step-indicator">
+                        <span class="step-dot" style="background:var(--capture);" id="stepDot"></span>
+                        <span id="stepStatus">Ready</span>
+                    </span>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-step" id="stepPrev" disabled>◀ Prev</button>
+                    <button class="btn-step" id="stepNext" disabled>Next ▶</button>
+                    <button class="btn-ghost" id="stepReset">↺ Reset Queue</button>
+                </div>
+                <p style="font-size:0.7rem;color:var(--muted);margin-top:6px;" id="stepDetail">Click the playground to
+                    capture an event, then step through.</p>
+            </div>
+
+            <!-- Inspector -->
+            <div class="card">
+                <h2>🔍 Event Inspector</h2>
+                <table class="inspector-table">
+                    <tr>
+                        <td>event.target</td>
+                        <td id="targetCell">—</td>
+                    </tr>
+                    <tr>
+                        <td>event.currentTarget</td>
+                        <td id="currentCell">—</td>
+                    </tr>
+                    <tr>
+                        <td>event.eventPhase</td>
+                        <td id="phaseCell">—</td>
+                    </tr>
+                    <tr>
+                        <td>event.bubbles</td>
+                        <td id="bubbleCell">—</td>
+                    </tr>
+                    <tr>
+                        <td>event.defaultPrevented</td>
+                        <td id="defaultCell">—</td>
+                    </tr>
+                    <tr>
+                        <td>event.timeStamp</td>
+                        <td id="timeCell">—</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Listener Configuration -->
+            <div class="card">
+                <h2>⚙ Listener Configuration</h2>
+                <p style="font-size:0.74rem;color:var(--muted);margin-bottom:8px;">Toggle capture/bubble listeners per
+                    element.</p>
+                <div class="toggle-row">
+                    <span>Grandparent</span>
+                    <div class="toggle-pair">
+                        <label class="mini-toggle active-cap" id="toggle-gp-cap">🔵 Capture<input type="checkbox"
+                                checked data-el="grandparent" data-phase="capture"></label>
+                        <label class="mini-toggle active-bub" id="toggle-gp-bub">🟠 Bubble<input type="checkbox" checked
+                                data-el="grandparent" data-phase="bubble"></label>
+                    </div>
+                </div>
+                <div class="toggle-row">
+                    <span>Parent</span>
+                    <div class="toggle-pair">
+                        <label class="mini-toggle active-cap" id="toggle-p-cap">🔵 Capture<input type="checkbox" checked
+                                data-el="parent" data-phase="capture"></label>
+                        <label class="mini-toggle active-bub" id="toggle-p-bub">🟠 Bubble<input type="checkbox" checked
+                                data-el="parent" data-phase="bubble"></label>
+                    </div>
+                </div>
+                <div class="toggle-row">
+                    <span>Child</span>
+                    <div class="toggle-pair">
+                        <label class="mini-toggle active-cap" id="toggle-c-cap">🔵 Capture<input type="checkbox" checked
+                                data-el="child" data-phase="capture"></label>
+                        <label class="mini-toggle active-bub" id="toggle-c-bub">🟠 Bubble<input type="checkbox" checked
+                                data-el="child" data-phase="bubble"></label>
+                    </div>
+                </div>
+                <div class="toggle-row">
+                    <span>Target Button</span>
+                    <div class="toggle-pair">
+                        <label class="mini-toggle active-cap" id="toggle-t-cap">🔵 Capture<input type="checkbox" checked
+                                data-el="target" data-phase="capture"></label>
+                        <label class="mini-toggle active-bub" id="toggle-t-bub">🟠 Bubble<input type="checkbox" checked
+                                data-el="target" data-phase="bubble"></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="card">
+                <h2>📜 Timeline</h2>
+                <div class="log-container" id="logContainer">
+                    <div id="log" style="display:flex;flex-direction:column-reverse;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- DOCUMENTATION                         -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="card" style="margin-top:20px;">
+        <h2>📖 How Event Propagation Works</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+            <div>
+                <h3>1. Three Phases</h3>
+                <pre>CAPTURE ↓  (outer → inner)
+TARGET  🎯 (the clicked element)
+BUBBLE  ↑  (inner → outer)</pre>
+                <p style="font-size:0.8rem;color:var(--muted);">Every DOM event travels through all three phases.
+                    Listeners can opt into capture by setting
+                    <code>{capture: true}</code>.
+                </p>
+            </div>
+            <div>
+                <h3>2. event.target vs currentTarget</h3>
+                <p style="font-size:0.8rem;color:var(--muted);"><code>event.target</code> = the element that was
+                    actually
+                    clicked.<br><code>event.currentTarget</code> = the element whose listener is currently running.</p>
+            </div>
+            <div>
+                <h3>3. stopPropagation()</h3>
+                <p style="font-size:0.8rem;color:var(--muted);">Stops the event from traveling further. Useful when a
+                    child's click shouldn't reach parent listeners.</p>
+            </div>
+            <div>
+                <h3>4. preventDefault()</h3>
+                <p style="font-size:0.8rem;color:var(--muted);">Blocks the browser's built-in behavior (navigation, form
+                    submission, etc.) without stopping propagation.</p>
+            </div>
+            <div>
+                <h3>5. Event Delegation</h3>
+                <p style="font-size:0.8rem;color:var(--muted);">Attach one listener to a parent and handle child events
+                    via <code>event.target</code>. Efficient for dynamic lists.</p>
+            </div>
+            <div>
+                <h3>6. once & passive</h3>
+                <p style="font-size:0.8rem;color:var(--muted);"><code>{once: true}</code> — auto-remove after first
+                    invocation.<br><code>{passive: true}</code> — improves scroll performance.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            /*
+            ╔══════════════════════════════════════════════╗
+            ║  EVENT PROPAGATION EXPLORER — ENHANCED     ║
+            ║  Capture · Target · Bubble · Delegation    ║
+            ╚══════════════════════════════════════════════╝
+            */
+
+            // ── DOM References ────────────────────
+            const logContainer = document.getElementById('log');
+            const logScroll = document.getElementById('logContainer');
+            const pathDiagram = document.getElementById('pathDiagram');
+            const pathStepInfo = document.getElementById('pathStepInfo');
+            const speedSlider = document.getElementById('speedSlider');
+            const speedLabel = document.getElementById('speedLabel');
+            const stepModeCheckbox = document.getElementById('stepMode');
+            const stopPropCheckbox = document.getElementById('stopPropagation');
+            const preventDefaultCheckbox = document.getElementById('preventDefault');
+            const stepControlsCard = document.getElementById('stepControlsCard');
+            const stepPrevBtn = document.getElementById('stepPrev');
+            const stepNextBtn = document.getElementById('stepNext');
+            const stepResetBtn = document.getElementById('stepReset');
+            const stepStatus = document.getElementById('stepStatus');
+            const stepDetail = document.getElementById('stepDetail');
+            const stepDot = document.getElementById('stepDot');
+
+            // ── State ────────────────────────────
+            const hitCounters = { grandparent: 0, parent: 0, child: 0, target: 0 };
+            const listenerConfig = {
+                grandparent: { capture: true, bubble: true },
+                parent: { capture: true, bubble: true },
+                child: { capture: true, bubble: true },
+                target: { capture: true, bubble: true },
+            };
+
+            let stepQueue = []; // {element, phaseName, message, logType, pathNodeKey}
+            let stepIndex = -1;
+            let stepDelay = 80; // ms per step (controlled by slider)
+            let isProcessingVisualQueue = false;
+            let visualTimeoutIds = [];
+
+            // ── Speed Slider ─────────────────────
+            speedSlider.addEventListener('input', () => {
+                stepDelay = parseInt(speedSlider.value);
+                speedLabel.textContent = stepDelay + 'ms';
+                document.documentElement.style.setProperty('--step-delay', stepDelay + 'ms');
+            });
+            stepDelay = parseInt(speedSlider.value);
+            speedLabel.textContent = stepDelay + 'ms';
+
+            // ── Step Mode Toggle ────────────────
+            stepModeCheckbox.addEventListener('change', () => {
+                if (stepModeCheckbox.checked) {
+                    stepControlsCard.style.display = 'block';
+                    stepControlsCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    stepControlsCard.style.display = 'none';
+                    clearStepQueue();
+                }
+            });
+
+            // ── Listener Config Toggles ──────────
+            document.querySelectorAll('.mini-toggle input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    const el = this.dataset.el;
+                    const phase = this.dataset.phase;
+                    listenerConfig[el][phase] = this.checked;
+                    // Update label class
+                    const label = this.parentElement;
+                    if (phase === 'capture') {
+                        label.classList.toggle('active-cap', this.checked);
+                    } else {
+                        label.classList.toggle('active-bub', this.checked);
+                    }
+                    showToast(
+                        `${el} ${phase} listener: ${this.checked ? '✅ ON' : '❌ OFF'}`);
+                });
+            });
+
+            // ── Helpers ──────────────────────────
+            function phaseName(phase) {
+                switch (phase) {
+                    case 1:
+                        return 'Capturing';
+                    case 2:
+                        return 'Target';
+                    case 3:
+                        return 'Bubbling';
+                    default:
+                        return '-';
+                }
+            }
+
+            function phaseClass(phase) {
+                switch (phase) {
+                    case 1:
+                        return 'capture';
+                    case 2:
+                        return 'target';
+                    case 3:
+                        return 'bubble';
+                    default:
+                        return '';
+                }
+            }
+
+            function logTypeForPhase(phase) {
+                switch (phase) {
+                    case 1:
+                        return 'log-capture';
+                    case 2:
+                        return 'log-target';
+                    case 3:
+                        return 'log-bubble';
+                    default:
+                        return '';
+                }
+            }
+
+            function logIconForPhase(phase) {
+                switch (phase) {
+                    case 1:
+                        return 'cap';
+                    case 2:
+                        return 'tar';
+                    case 3:
+                        return 'bub';
+                    default:
+                        return '';
+                }
+            }
+
+            function getDepth(element) {
+                let depth = 0;
+                let current = element;
+                while (current && current.id !== 'grandparent') {
+                    depth++;
+                    current = current.parentElement;
+                    if (!current || current === document.body || current === document.documentElement) break;
+                }
+                if (current && current.id === 'grandparent') return depth;
+                // Fallback: count up to body
+                let d = 0;
+                let c = element;
+                while (c && c !== document.body && c !== document.documentElement) {
+                    d++;
+                    c = c.parentElement;
+                }
+                return d;
+            }
+
+            function getSequenceIndex(element, phase, targetElement) {
+                const depth = getDepth(element);
+                const maxDepth = getDepth(targetElement);
+                if (phase === 1) return depth; // capture
+                if (phase === 2) return maxDepth; // target
+                if (phase === 3) return 2 * maxDepth - depth; // bubble
+                return 0;
+            }
+
+            function getPathNodeKey(elementId, phase) {
+                if (phase === 2) return 'target';
+                const suffix = phase === 1 ? 'cap' : 'bub';
+                return `${elementId}-${suffix}`;
+            }
+
+            function updateInspector(event) {
+                document.getElementById('targetCell').textContent = event.target.id || event.target.tagName;
+                document.getElementById('currentCell').textContent = event.currentTarget.id || event.currentTarget
+                    .tagName;
+                document.getElementById('phaseCell').textContent = phaseName(event.eventPhase);
+                document.getElementById('bubbleCell').textContent = event.bubbles;
+                document.getElementById('defaultCell').textContent = event.defaultPrevented;
+                document.getElementById('timeCell').textContent = Math.round(event.timeStamp) + ' ms';
+            }
+
+            function updateHitCounter(elementId) {
+                hitCounters[elementId] = (hitCounters[elementId] || 0) + 1;
+                const badge = document.getElementById('hit-' + elementId);
+                if (badge) badge.textContent = hitCounters[elementId];
+            }
+
+            function resetHitCounters() {
+                ['grandparent', 'parent', 'child', 'target'].forEach(id => {
+                    hitCounters[id] = 0;
+                    const badge = document.getElementById('hit-' + id);
+                    if (badge) badge.textContent = '0';
+                });
+                showToast('↺ Hit counters reset');
+            }
+
+            function logMessage(message, logType, iconType) {
+                const div = document.createElement('div');
+                div.className = `log-item ${logType}`;
+                const iconSpan = document.createElement('span');
+                iconSpan.className = `log-icon ${iconType}`;
+                const textNode = document.createTextNode(message);
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'log-time';
+                timeSpan.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+                div.appendChild(iconSpan);
+                div.appendChild(textNode);
+                div.appendChild(timeSpan);
+                logContainer.appendChild(div);
+                // Scroll to bottom
+                if (logScroll) logScroll.scrollTop = logScroll.scrollHeight;
+            }
+
+            function clearTimeline() {
+                logContainer.innerHTML = '';
+                showToast('🗑 Timeline cleared');
+            }
+
+            function highlightPathNode(nodeKey) {
+                // Clear all highlights
+                pathDiagram.querySelectorAll('.path-node').forEach(n => {
+                    n.classList.remove('highlight-capture', 'highlight-target', 'highlight-bubble');
+                });
+                // Find and highlight the matching node
+                const node = pathDiagram.querySelector(`[data-path="${nodeKey}"]`);
+                if (node) {
+                    if (nodeKey === 'target') {
+                        node.classList.add('highlight-target');
+                    } else if (nodeKey.endsWith('-cap')) {
+                        node.classList.add('highlight-capture');
+                    } else if (nodeKey.endsWith('-bub')) {
+                        node.classList.add('highlight-bubble');
+                    }
+                }
+            }
+
+            function clearPathHighlight() {
+                pathDiagram.querySelectorAll('.path-node').forEach(n => {
+                    n.classList.remove('highlight-capture', 'highlight-target', 'highlight-bubble');
+                });
+                pathStepInfo.textContent = 'Click to see the flow';
+            }
+
+            function showToast(message) {
+                const existing = document.querySelector('.toast');
+                if (existing) existing.remove();
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2400);
+            }
+
+            function addRipple(element) {
+                element.classList.add('ripple');
+                setTimeout(() => element.classList.remove('ripple'), 600);
+            }
+
+            // ── Clear visual timeouts ────────────
+            function clearVisualTimeouts() {
+                visualTimeoutIds.forEach(id => clearTimeout(id));
+                visualTimeoutIds = [];
+            }
+
+            // ── Process visual queue ─────────────
+            function processVisualQueue(queue, delayPerStep) {
+                clearVisualTimeouts();
+                // Clear existing highlights first
+                ['grandparent', 'parent', 'child', 'target'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.classList.remove('capture-active', 'target-active', 'bubble-active');
+                    }
+                });
+                clearPathHighlight();
+
+                queue.forEach((item, index) => {
+                    const tid = setTimeout(() => {
+                        const el = document.getElementById(item.elementId);
+                        const glowClass = item.phase === 1 ? 'capture-active' :
+                            item.phase === 2 ? 'target-active' :
+                                'bubble-active';
+
+                        if (el) {
+                            el.classList.add(glowClass);
+                            if (item.phase === 2) addRipple(el);
+                            // Remove after delay
+                            const removeTid = setTimeout(() => {
+                                if (el) el.classList.remove(glowClass);
+                            }, Math.max(delayPerStep * 0.8, 150));
+                            visualTimeoutIds.push(removeTid);
+                        }
+
+                        highlightPathNode(item.pathNodeKey);
+                        logMessage(item.message, item.logType, item.logIcon);
+                        updateHitCounter(item.elementId);
+                        pathStepInfo.textContent =
+                            `Phase: ${item.phaseName} → ${item.elementId}`;
+
+                    }, index * delayPerStep);
+                    visualTimeoutIds.push(tid);
+                });
+
+                // Final cleanup
+                const finalTid = setTimeout(() => {
+                    clearPathHighlight();
+                    pathStepInfo.textContent = 'Propagation complete ✓';
+                }, queue.length * delayPerStep + 400);
+                visualTimeoutIds.push(finalTid);
+            }
+
+            // ── Step Queue Management ────────────
+            function buildStepQueue(event, targetElement) {
+                const queue = [];
+                const allElements = ['grandparent', 'parent', 'child', 'target'];
+                const maxDepth = getDepth(targetElement);
+
+                // Capture phase (outer to inner, excluding target)
+                const captureElements = [];
+                for (const elId of allElements) {
+                    const el = document.getElementById(elId);
+                    if (!el) continue;
+                    const depth = getDepth(el);
+                    if (depth >= 0 && depth < maxDepth && listenerConfig[elId].capture) {
+                        captureElements.push({ elId, depth });
+                    }
+                }
+                captureElements.sort((a, b) => a.depth - b.depth);
+                captureElements.forEach(({ elId, depth }) => {
+                    queue.push({
+                        elementId: elId,
+                        phase: 1,
+                        phaseName: 'Capturing',
+                        message: `CAPTURE → ${elId}`,
+                        logType: 'log-capture',
+                        logIcon: 'cap',
+                        pathNodeKey: `${elId}-cap`,
+                    });
+                });
+
+                // Target phase
+                if (listenerConfig[targetElement.id] && (listenerConfig[targetElement.id].capture || listenerConfig[
+                    targetElement.id].bubble)) {
+                    queue.push({
+                        elementId: targetElement.id,
+                        phase: 2,
+                        phaseName: 'Target',
+                        message: `TARGET → ${targetElement.id}`,
+                        logType: 'log-target',
+                        logIcon: 'tar',
+                        pathNodeKey: 'target',
+                    });
+                }
+
+                // Bubble phase (inner to outer, excluding target)
+                const bubbleElements = [];
+                for (const elId of allElements) {
+                    const el = document.getElementById(elId);
+                    if (!el) continue;
+                    const depth = getDepth(el);
+                    if (depth >= 0 && depth < maxDepth && listenerConfig[elId].bubble) {
+                        bubbleElements.push({ elId, depth });
+                    }
+                }
+                bubbleElements.sort((a, b) => b.depth - a.depth);
+                bubbleElements.forEach(({ elId, depth }) => {
+                    queue.push({
+                        elementId: elId,
+                        phase: 3,
+                        phaseName: 'Bubbling',
+                        message: `BUBBLE → ${elId}`,
+                        logType: 'log-bubble',
+                        logIcon: 'bub',
+                        pathNodeKey: `${elId}-bub`,
+                    });
+                });
+
+                return queue;
+            }
+
+            function clearStepQueue() {
+                stepQueue = [];
+                stepIndex = -1;
+                updateStepButtons();
+                clearVisualTimeouts();
+                ['grandparent', 'parent', 'child', 'target'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.remove('capture-active', 'target-active', 'bubble-active');
+                });
+                clearPathHighlight();
+                stepStatus.textContent = 'Ready';
+                stepDetail.textContent = 'Click the playground to capture an event, then step through.';
+                stepDot.style.background = 'var(--capture)';
+            }
+
+            function updateStepButtons() {
+                stepPrevBtn.disabled = stepIndex <= 0;
+                stepNextBtn.disabled = stepIndex >= stepQueue.length - 1 || stepQueue.length === 0;
+                if (stepQueue.length === 0) {
+                    stepPrevBtn.disabled = true;
+                    stepNextBtn.disabled = true;
+                }
+            }
+
+            function executeStep(index) {
+                if (index < 0 || index >= stepQueue.length) return;
+                const item = stepQueue[index];
+                const el = document.getElementById(item.elementId);
+
+                // Clear all glows
+                ['grandparent', 'parent', 'child', 'target'].forEach(id => {
+                    const e = document.getElementById(id);
+                    if (e) e.classList.remove('capture-active', 'target-active', 'bubble-active');
+                });
+
+                const glowClass = item.phase === 1 ? 'capture-active' :
+                    item.phase === 2 ? 'target-active' : 'bubble-active';
+
+                if (el) {
+                    el.classList.add(glowClass);
+                    if (item.phase === 2) addRipple(el);
+                }
+                highlightPathNode(item.pathNodeKey);
+                logMessage(item.message, item.logType, item.logIcon);
+                updateHitCounter(item.elementId);
+                pathStepInfo.textContent = `Step ${index + 1}/${stepQueue.length}: ${item.phaseName} → ${item.elementId}`;
+                stepStatus.textContent = `${item.phaseName}`;
+                stepDot.style.background = item.phase === 1 ? 'var(--capture)' :
+                    item.phase === 2 ? 'var(--target)' : 'var(--bubble)';
+                stepDetail.textContent =
+                    `Element: #${item.elementId} | Phase: ${item.phaseName} (eventPhase=${item.phase})`;
+                updateStepButtons();
+
+                if (index === stepQueue.length - 1) {
+                    stepDetail.textContent += ' | ✅ Propagation complete!';
+                }
+            }
+
+            stepNextBtn.addEventListener('click', () => {
+                if (stepIndex < stepQueue.length - 1) {
+                    stepIndex++;
+                    executeStep(stepIndex);
+                }
+            });
+
+            stepPrevBtn.addEventListener('click', () => {
+                if (stepIndex > 0) {
+                    stepIndex--;
+                    executeStep(stepIndex);
+                }
+            });
+
+            stepResetBtn.addEventListener('click', () => {
+                clearStepQueue();
+                updateStepButtons();
+            });
+
+            // ── Core Event Handler Factory ────────
+            function createCaptureHandler(elementId) {
+                return function (event) {
+                    if (!listenerConfig[elementId].capture) return;
+                    updateInspector(event);
+                    const targetEl = event.target.id ? event.target : document.getElementById('target');
+                    const seqIndex = getSequenceIndex(this, 1, targetEl);
+                    const pathKey = getPathNodeKey(elementId, 1);
+
+                    if (stepModeCheckbox.checked) {
+                        // In step mode, build queue on first capture
+                        if (stepQueue.length === 0) {
+                            const fullTarget = event.target.id ? event.target : document.getElementById(
+                                'target');
+                            stepQueue = buildStepQueue(event, fullTarget);
+                            stepIndex = -1;
+                            updateStepButtons();
+                            stepStatus.textContent = 'Captured!';
+                            stepDetail.textContent =
+                                `Event captured. ${stepQueue.length} steps in queue. Click "Next" to begin.`;
+                            stepDot.style.background = 'var(--capture)';
+                            pathStepInfo.textContent =
+                                `Queue built: ${stepQueue.length} steps ready`;
+                            showToast(`📋 ${stepQueue.length} propagation steps queued`);
+                        }
+                        // Don't auto-process visuals in step mode
+                        return;
+                    }
+
+                    // Normal/slow mode: queue visual
+                    const queueItem = {
+                        elementId,
+                        phase: 1,
+                        phaseName: 'Capturing',
+                        message: `CAPTURE → ${elementId}`,
+                        logType: 'log-capture',
+                        logIcon: 'cap',
+                        pathNodeKey: pathKey,
+                    };
+                    // Use a temporary queue for this event
+                    if (!event._visualQueue) event._visualQueue = [];
+                    event._visualQueue.push({ ...queueItem, seqIndex });
+                };
+            }
+
+            function createBubbleHandler(elementId) {
+                return function (event) {
+                    if (!listenerConfig[elementId].bubble) return;
+                    updateInspector(event);
+                    const targetEl = event.target.id ? event.target : document.getElementById('target');
+                    const seqIndex = getSequenceIndex(this, 3, targetEl);
+                    const pathKey = getPathNodeKey(elementId, 3);
+
+                    if (stepModeCheckbox.checked) {
+                        // In step mode, build queue on first encounter if not built
+                        if (stepQueue.length === 0) {
+                            const fullTarget = event.target.id ? event.target : document.getElementById(
+                                'target');
+                            stepQueue = buildStepQueue(event, fullTarget);
+                            stepIndex = -1;
+                            updateStepButtons();
+                            stepStatus.textContent = 'Captured!';
+                            stepDetail.textContent =
+                                `Event captured. ${stepQueue.length} steps in queue. Click "Next" to begin.`;
+                            stepDot.style.background = 'var(--capture)';
+                            pathStepInfo.textContent =
+                                `Queue built: ${stepQueue.length} steps ready`;
+                            showToast(`📋 ${stepQueue.length} propagation steps queued`);
+                        }
+                        return;
+                    }
+
+                    const queueItem = {
+                        elementId,
+                        phase: 3,
+                        phaseName: 'Bubbling',
+                        message: `BUBBLE → ${elementId}`,
+                        logType: 'log-bubble',
+                        logIcon: 'bub',
+                        pathNodeKey: pathKey,
+                    };
+                    if (!event._visualQueue) event._visualQueue = [];
+                    event._visualQueue.push({ ...queueItem, seqIndex });
+                };
+            }
+
+            // ── Attach Listeners ──────────────────
+            const nodeIds = ['grandparent', 'parent', 'child', 'target'];
+
+            nodeIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+
+                element.addEventListener('click', createCaptureHandler(id), true);
+                element.addEventListener('click', createBubbleHandler(id), false);
+            });
+
+            // ── Target Button Special Handler ─────
+            document.getElementById('target').addEventListener('click', function (event) {
+                if (!listenerConfig['target'].capture && !listenerConfig['target'].bubble) return;
+                updateInspector(event);
+
+                if (stepModeCheckbox.checked) {
+                    if (stepQueue.length === 0) {
+                        stepQueue = buildStepQueue(event, event.target);
+                        stepIndex = -1;
+                        updateStepButtons();
+                        stepStatus.textContent = 'Captured!';
+                        stepDetail.textContent =
+                            `Event captured. ${stepQueue.length} steps in queue. Click "Next" to begin.`;
+                        stepDot.style.background = 'var(--target)';
+                        pathStepInfo.textContent = `Queue built: ${stepQueue.length} steps ready`;
+                        showToast(`📋 ${stepQueue.length} propagation steps queued`);
+                    }
+                    if (stopPropCheckbox.checked) {
+                        event.stopPropagation();
+                        stepDetail.textContent += ' | 🛑 stopPropagation() called';
+                    }
+                    return;
+                }
+
+                // Normal mode: add target to visual queue
+                const queueItem = {
+                    elementId: 'target',
+                    phase: 2,
+                    phaseName: 'Target',
+                    message: 'TARGET → target button',
+                    logType: 'log-target',
+                    logIcon: 'tar',
+                    pathNodeKey: 'target',
+                    seqIndex: getSequenceIndex(this, 2, event.target),
+                };
+                if (!event._visualQueue) event._visualQueue = [];
+                event._visualQueue.push(queueItem);
+
+                // Process visual queue after all listeners fire
+                if (event._visualQueue && event._visualQueue.length > 0) {
+                    const q = event._visualQueue;
+                    // Sort by seqIndex
+                    q.sort((a, b) => a.seqIndex - b.seqIndex);
+                    // Schedule processing after current event loop
+                    setTimeout(() => {
+                        processVisualQueue(q, stepDelay);
+                    }, 0);
+                    event._visualQueue = null;
+                }
+
+                if (stopPropCheckbox.checked) {
+                    event.stopPropagation();
+                    logMessage('🛑 stopPropagation() called', 'log-target', 'tar');
+                }
+            });
+
+            // ── Process visual queue after propagation ──
+            // We need a way to process the queue after all synchronous listeners fire.
+            // Using a MutationObserver-like approach: schedule processing on the next microtask.
+            // Actually, we'll process at the end of each phase transition using a wrapper.
+            // Simplification: use event._visualQueue collected by handlers, process on setTimeout(0)
+            // But since multiple handlers add to the same queue synchronously, we process once.
+
+            // Override: wrap the dispatch to intercept and process queue
+            // For simplicity, we'll process in the target handler (which fires last in capture
+            // and first in bubble). The target handler above already processes the queue.
+            // For clicks on non-target elements, we need similar processing.
+            // Let's add a document-level handler to catch and process remaining queues.
+
+            document.addEventListener('click', function (event) {
+                // Process any unprocessed visual queue
+                if (event._visualQueue && event._visualQueue.length > 0 && !stepModeCheckbox.checked) {
+                    const q = event._visualQueue;
+                    q.sort((a, b) => a.seqIndex - b.seqIndex);
+                    setTimeout(() => {
+                        processVisualQueue(q, stepDelay);
+                    }, 0);
+                    event._visualQueue = null;
+                }
+            }, true);
+
+            // ── Event Delegation ──────────────────
+            const list = document.getElementById('list');
+            list.addEventListener('click', function (event) {
+                if (event.target.matches('li')) {
+                    logMessage(
+                        `📋 Delegated click → Item ${event.target.dataset.id}`,
+                        'log-target',
+                        'tar'
+                    );
+                    updateHitCounter('delegation');
+                    // Highlight the clicked item briefly
+                    event.target.style.background = '#1e4a6e';
+                    event.target.style.borderColor = 'var(--accent)';
+                    setTimeout(() => {
+                        event.target.style.background = '';
+                        event.target.style.borderColor = '';
+                    }, 400);
+                }
+            });
+
+            let itemCount = 4;
+            document.getElementById('addItem').addEventListener('click', () => {
+                const li = document.createElement('li');
+                li.dataset.id = itemCount;
+                li.textContent = `📦 Item ${itemCount}`;
+                list.appendChild(li);
+                logMessage(`➕ Added Item ${itemCount} (delegation-ready)`, 'log-target', 'tar');
+                itemCount++;
+            });
+
+            // ── Prevent Default ───────────────────
+            document.getElementById('demoLink').addEventListener('click', function (event) {
+                if (preventDefaultCheckbox.checked) {
+                    event.preventDefault();
+                    logMessage('🚫 Navigation prevented (preventDefault)', 'log-target', 'tar');
+                    showToast('🚫 Navigation blocked by preventDefault()');
+                }
+            });
+
+            // ── Clear Button ──────────────────────
+            document.getElementById('clear').addEventListener('click', clearTimeline);
+
+            // ── Reset Counters Button ─────────────
+            document.getElementById('resetCounters').addEventListener('click', resetHitCounters);
+
+            // ── Keyboard Shortcuts ────────────────
+            document.addEventListener('keydown', function (event) {
+                // Don't trigger when typing in inputs
+                if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+
+                switch (event.key.toLowerCase()) {
+                    case 'c':
+                        if (!event.ctrlKey && !event.metaKey) {
+                            clearTimeline();
+                        }
+                        break;
+                    case 'r':
+                        if (!event.ctrlKey && !event.metaKey) {
+                            resetHitCounters();
+                            clearStepQueue();
+                            updateStepButtons();
+                        }
+                        break;
+                    case 's':
+                        if (!event.ctrlKey && !event.metaKey && stepModeCheckbox.checked) {
+                            if (stepIndex < stepQueue.length - 1 && stepQueue.length > 0) {
+                                stepIndex++;
+                                executeStep(stepIndex);
+                            } else if (stepQueue.length === 0) {
+                                showToast('👆 Click the playground first to capture an event');
+                            }
+                        }
+                        break;
+                    case 'arrowright':
+                        if (stepModeCheckbox.checked && stepIndex < stepQueue.length - 1) {
+                            event.preventDefault();
+                            stepIndex++;
+                            executeStep(stepIndex);
+                        }
+                        break;
+                    case 'arrowleft':
+                        if (stepModeCheckbox.checked && stepIndex > 0) {
+                            event.preventDefault();
+                            stepIndex--;
+                            executeStep(stepIndex);
+                        }
+                        break;
+                }
+            });
+
+            // ── Initialization ────────────────────
+            console.log('⚡ Event Propagation Explorer ready');
+            console.log('  🖱 Click the nested boxes to see propagation');
+            console.log('  👣 Enable Step Mode for frame-by-frame walkthrough');
+            console.log('  ⌨  Keys: C=clear R=reset S=step →=next ←=prev');
+            console.log('  ⚙ Toggle listeners in the right panel');
+
+            // Initialize listener toggle labels
+            document.querySelectorAll('.mini-toggle').forEach(label => {
+                const cb = label.querySelector('input');
+                if (cb && cb.dataset.phase === 'capture') {
+                    label.classList.toggle('active-cap', cb.checked);
+                } else if (cb && cb.dataset.phase === 'bubble') {
+                    label.classList.toggle('active-bub', cb.checked);
+                }
+            });
+
+        })();
+    </script>
+
+</body>
+
+</html>
