@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XHR — GitHub API Demo</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #111b2f;
+      --border: #1e2d45;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #6366f1;
+      --surface: #1a2740;
+      --radius: 12px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #e2e8f0, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      margin-bottom: 1rem;
+      object-fit: cover;
+    }
+    .name {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .followers {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+    .loading {
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 2rem 0;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>GitHub Profile</h1>
+    <p class="subtitle">Fetching data via XMLHttpRequest</p>
+    <div id="loading" class="loading">Loading...</div>
+    <img id="avatar" src="" alt="avatar" style="display:none;" />
+    <div class="name" id="name"></div>
+    <div class="followers" id="followers"></div>
+    <div id="badge" class="badge">@arundada9000</div>
+  </div>
+
+  <script>
+    const requestUrl = "https://api.github.com/users/arundada9000";
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", requestUrl);
+
+    xhr.onreadystatechange = function () {
+      console.log("readyState:", xhr.readyState);
+
+      if (xhr.readyState === 4) {
+        const data = JSON.parse(this.responseText);
+        console.log("GitHub data:", data);
+
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("avatar").style.display = "inline";
+        document.getElementById("avatar").src = data.avatar_url;
+        document.querySelector(".name").textContent = data.name || "No name";
+        document.querySelector(".followers").textContent = `Followers: ${data.followers}`;
+      }
+    };
+
+    xhr.send();
+  </script>
+</body>
+</html>

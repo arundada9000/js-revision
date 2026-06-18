@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>setInterval & clearInterval Demo</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #111b2f;
+      --border: #1e2d45;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #6366f1;
+      --surface: #1a2740;
+      --radius: 12px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #e2e8f0, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    #clock {
+      font-size: 2.5rem;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      margin: 1rem 0;
+      color: #38bdf8;
+    }
+    button {
+      font-family: inherit;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0 6px;
+    }
+    #start {
+      background: #22c55e;
+      color: #fff;
+    }
+    #start:hover {
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+    }
+    #stop {
+      background: #991b1b;
+      color: #fff;
+    }
+    #stop:hover {
+      box-shadow: 0 0 20px rgba(153, 27, 27, 0.35);
+    }
+    .status {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>setInterval Demo</h1>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:0.5rem;">
+      Live timestamp updates every second
+    </p>
+    <div id="clock">--</div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button id="start">Start</button>
+      <button id="stop">Stop</button>
+    </div>
+    <div class="status" id="status">Click Start to begin</div>
+  </div>
+
+  <script>
+    const clock = document.getElementById("clock");
+    const status = document.getElementById("status");
+
+    function updateClock() {
+      clock.textContent = new Date().toLocaleTimeString();
+    }
+
+    let interval = null;
+
+    document.getElementById("start").addEventListener("click", () => {
+      if (!interval) {
+        interval = setInterval(() => {
+          updateClock();
+          console.log("Tick:", Date.now());
+        }, 1000);
+        status.textContent = "Running...";
+      }
+    });
+
+    document.getElementById("stop").addEventListener("click", () => {
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+        status.textContent = "Stopped";
+        console.log("Interval stopped");
+      }
+    });
+  </script>
+</body>
+</html>
