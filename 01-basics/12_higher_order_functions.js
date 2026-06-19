@@ -85,3 +85,10 @@ console.log(
   "Average marks:",
   students.reduce((acc, s) => acc + s.marks, 0) / students.length
 );
+
+// Practical: group by property
+const groupedByGrade = students.reduce((acc, s) => {
+  (acc[s.grade] = acc[s.grade] || []).push(s.name);
+  return acc;
+}, {});
+console.log("Grouped by grade:", groupedByGrade);
