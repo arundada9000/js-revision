@@ -143,3 +143,7 @@ This repo documents learning in public. The code is deliberately:
 ## License
 
 MIT License — free and open source. Use, modify, and distribute however you want. See [LICENSE](LICENSE).
+
+---
+
+*Revision completed June 20, 2026 — from variables to async, DOM to prototypes. Every topic covered, every example run.*
