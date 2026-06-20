@@ -1,4 +1,4 @@
-# 03 — Asynchronous JavaScript
+# 03 - Asynchronous JavaScript
 
 Promises, async/await, fetch API, timers, and legacy XHR.
 
@@ -16,3 +16,4 @@ Promises, async/await, fetch API, timers, and legacy XHR.
 
 - JS files: `node 03-async/01_promises.js`
 - HTML files: open in browser
+

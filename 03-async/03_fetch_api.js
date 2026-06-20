@@ -1,4 +1,4 @@
-// JavaScript Fetch API — Modern HTTP Requests
+// JavaScript Fetch API - Modern HTTP Requests
 
 // Fetch with .then/.catch
 fetch("https://jsonplaceholder.typicode.com/users")
@@ -46,10 +46,11 @@ async function getMultipleUsers() {
     const user1 = await res1.json();
     const user2 = await res2.json();
 
-    console.log(`Promise.all — User 1: ${user1.name}`);
-    console.log(`Promise.all — User 2: ${user2.name}`);
+    console.log(`Promise.all - User 1: ${user1.name}`);
+    console.log(`Promise.all - User 2: ${user2.name}`);
   } catch (error) {
     console.log("Error:", error);
   }
 }
 getMultipleUsers();
+

@@ -1,4 +1,4 @@
-// JavaScript Arrays — Methods, Manipulation, and Filtering
+// JavaScript Arrays - Methods, Manipulation, and Filtering
 
 const myArray = [0, 1, 2, 3, 4, 5];
 console.log("Original:", myArray.join(" "));
@@ -56,3 +56,4 @@ console.log(
     (s) => (s.enrolled || s.marks >= 90) && s.city.toLowerCase() !== "pokhara"
   )
 );
+

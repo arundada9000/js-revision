@@ -1,4 +1,4 @@
-// JavaScript Destructuring & Spread — Unpacking Objects and Arrays
+// JavaScript Destructuring & Spread - Unpacking Objects and Arrays
 
 const course = {
   name: "JS in English",
@@ -51,3 +51,4 @@ const {
 } = user;
 console.log("Display name:", displayName);
 console.log("Primary role:", primaryRole);
+

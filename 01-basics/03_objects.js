@@ -1,4 +1,4 @@
-// JavaScript Objects — Creation, Properties, Methods
+// JavaScript Objects - Creation, Properties, Methods
 
 const person = {
   name: "Arun Neupane",
@@ -138,3 +138,4 @@ const course = {
 };
 const { courseInstructor: instructor } = course;
 console.log("Instructor:", instructor);
+

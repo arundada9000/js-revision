@@ -1,22 +1,22 @@
-// JavaScript Variables — var, let, const, hoisting, TDZ
+// JavaScript Variables - var, let, const, hoisting, TDZ
 
-// const — cannot be reassigned
+// const - cannot be reassigned
 const name = "Arun Neupane";
 console.log("Name:", name);
 
-// let — block-scoped, can be reassigned
+// let - block-scoped, can be reassigned
 let age = 22;
 console.log("Age:", age);
 age = 23;
 console.log("Age after update:", age);
 
-// var — function-scoped, hoisted, can be redeclared
+// var - function-scoped, hoisted, can be redeclared
 var city = "Butwal";
 console.log("City:", city);
 var city = "Rupandehi";
 console.log("City after redeclare:", city);
 
-// Block scoping — let vs var
+// Block scoping - let vs var
 if (true) {
   let blockLet = "I'm block-scoped";
   var blockVar = "I'm function-scoped";
@@ -26,7 +26,7 @@ if (true) {
 console.log("Outside block (var):", blockVar);
 
 // Temporal Dead Zone (TDZ)
-// console.log(tdzVar); // ReferenceError — TDZ
+// console.log(tdzVar); // ReferenceError - TDZ
 let tdzVar = "Now I'm initialized";
 console.log("After TDZ:", tdzVar);
 
@@ -43,4 +43,5 @@ const user = { name: "Arun" };
 user.name = "Arun Neupane";
 user.age = 22;
 console.log("Mutable const object:", user);
-// user = {}; // TypeError — can't reassign
+// user = {}; // TypeError - can't reassign
+

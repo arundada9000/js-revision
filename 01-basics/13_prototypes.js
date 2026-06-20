@@ -1,4 +1,4 @@
-// JavaScript Prototypes — Inheritance Chain
+// JavaScript Prototypes - Inheritance Chain
 
 // Every object has a prototype
 const obj = { name: "Arun" };
@@ -70,3 +70,4 @@ console.log("Student:", student.study());
 console.log("Student instanceof Student:", student instanceof Student);
 console.log("Student instanceof Person:", student instanceof Person);
 console.log("Student instanceof Object:", student instanceof Object);
+

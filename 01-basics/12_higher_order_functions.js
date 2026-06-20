@@ -1,26 +1,26 @@
-// JavaScript Higher-Order Functions — map, filter, reduce, and more
+// JavaScript Higher-Order Functions - map, filter, reduce, and more
 
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-// forEach — side effects
+// forEach - side effects
 console.log("forEach:");
 numbers.forEach((n) => console.log(n * 2));
 
-// map — transform each element
+// map - transform each element
 const doubled = numbers.map((n) => n * 2);
 console.log("Doubled:", doubled);
 
 const labeled = numbers.map((n) => ({ value: n, isEven: n % 2 === 0 }));
 console.log("Labeled:", labeled);
 
-// filter — keep elements that pass test
+// filter - keep elements that pass test
 const even = numbers.filter((n) => n % 2 === 0);
 console.log("Even:", even);
 
 const big = numbers.filter((n) => n > 5);
 console.log("Big > 5:", big);
 
-// reduce — accumulate values
+// reduce - accumulate values
 const sum = numbers.reduce((acc, n) => acc + n, 0);
 console.log("Sum:", sum);
 
@@ -39,26 +39,26 @@ const grouped = numbers.reduce(
 );
 console.log("Grouped:", grouped);
 
-// some — at least one passes
+// some - at least one passes
 console.log("Has even:", numbers.some((n) => n % 2 === 0));
 console.log("Has > 20:", numbers.some((n) => n > 20));
 
-// every — all pass
+// every - all pass
 console.log("All positive:", numbers.every((n) => n > 0));
 console.log("All < 5:", numbers.every((n) => n < 5));
 
-// find — first match
+// find - first match
 console.log("First > 5:", numbers.find((n) => n > 5));
 console.log("First even:", numbers.find((n) => n % 2 === 0));
 
-// findIndex — index of first match
+// findIndex - index of first match
 console.log("Index of first > 5:", numbers.findIndex((n) => n > 5));
 
-// includes — check value exists
+// includes - check value exists
 console.log("Includes 5:", numbers.includes(5));
 console.log("Includes 99:", numbers.includes(99));
 
-// sort — with comparator
+// sort - with comparator
 const unsorted = [3, 1, 4, 1, 5, 9, 2, 6];
 console.log("Ascending:", [...unsorted].sort((a, b) => a - b));
 console.log("Descending:", [...unsorted].sort((a, b) => b - a));
@@ -92,3 +92,4 @@ const groupedByGrade = students.reduce((acc, s) => {
   return acc;
 }, {});
 console.log("Grouped by grade:", groupedByGrade);
+

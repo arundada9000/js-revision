@@ -1,4 +1,4 @@
-# 01 — JavaScript Basics
+# 01 - JavaScript Basics
 
 Core language fundamentals from the ground up. 17 files covering everything from variables to optional chaining.
 
@@ -29,3 +29,4 @@ Core language fundamentals from the ground up. 17 files covering everything from
 ```bash
 node 01-basics/00_variables.js
 ```
+

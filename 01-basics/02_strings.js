@@ -1,4 +1,4 @@
-// JavaScript Strings — Methods, Template Literals, Manipulation
+// JavaScript Strings - Methods, Template Literals, Manipulation
 
 const name = "Arun";
 const city = "Butwal";
@@ -52,3 +52,4 @@ for (const char of chars) {
 }
 console.log("Character at index 2:", chars.charAt(2));
 console.log("Char code at 0:", chars.charCodeAt(0));
+

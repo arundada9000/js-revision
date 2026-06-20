@@ -1,6 +1,6 @@
-// JavaScript Optional Chaining & Nullish Coalescing — ?. and ??
+// JavaScript Optional Chaining & Nullish Coalescing - ?. and ??
 
-// ── Optional Chaining (?.) — Safe nested access ──
+// ── Optional Chaining (?.) - Safe nested access ──
 const user = {
   name: "Arun",
   address: {
@@ -31,7 +31,7 @@ const obj = {
 console.log("Obj greet:", obj.greet?.());
 console.log("Obj farewell:", obj.farewell?.() ?? "No farewell method");
 
-// ── Nullish Coalescing (??) — Default for null/undefined ──
+// ── Nullish Coalescing (??) - Default for null/undefined ──
 const value1 = null;
 const value2 = undefined;
 const value3 = 0;
@@ -50,10 +50,10 @@ console.log("'' || default:", value4 || "default");
 console.log("false || default:", value5 || "default");
 
 // ── Short-circuit evaluation ──
-true && console.log("AND short-circuit — true continues");
-false && console.log("AND short-circuit — false stops");
-true || console.log("OR short-circuit — true stops");
-false || console.log("OR short-circuit — false continues");
+true && console.log("AND short-circuit - true continues");
+false && console.log("AND short-circuit - false stops");
+true || console.log("OR short-circuit - true stops");
+false || console.log("OR short-circuit - false continues");
 
 // Practical: safe config access
 const config = {
@@ -75,3 +75,4 @@ const apiResponse = {
 };
 const displayName = apiResponse?.data?.user?.name ?? "Guest";
 console.log("Display name:", displayName);
+

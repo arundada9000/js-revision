@@ -1,4 +1,4 @@
-// JavaScript Functions — Declaration, Expression, Arrow, Rest, Closure, IIFE
+// JavaScript Functions - Declaration, Expression, Arrow, Rest, Closure, IIFE
 
 // Function declaration
 function sum(...nums) {
@@ -29,7 +29,7 @@ const countVowels = (str) => {
 };
 console.log("Vowels in 'AEIOUaa':", countVowels("AEIOUaa"));
 
-// Higher-order — reduce to find max
+// Higher-order - reduce to find max
 function findMax(arr) {
   return arr.reduce((acc, item) => (item > acc ? item : acc), arr[0]);
 }
@@ -40,7 +40,7 @@ function countOccurrences(arr, target) {
 }
 console.log("Occurrences of 1:", countOccurrences([1, 2, 1, 3, 2, 1, 4, 1, 5], 1));
 
-// Closure — counter
+// Closure - counter
 function createCounter() {
   let count = 0;
   return () => {
@@ -68,3 +68,4 @@ function greet(name = "Guest") {
 }
 greet("Arun");
 greet();
+

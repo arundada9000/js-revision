@@ -1,4 +1,4 @@
-// JavaScript Data Types — Primitives, Reference, typeof, Coercion
+// JavaScript Data Types - Primitives, Reference, typeof, Coercion
 
 // ── Primitive Types ──
 const myString = "Hello Arun";
@@ -28,16 +28,16 @@ console.log("Object:", myObject, typeof myObject);
 console.log("Array:", myArray, typeof myArray);
 console.log("Function:", myFunction, typeof myFunction);
 
-// ── Primitive vs Reference — copy behavior ──
+// ── Primitive vs Reference - copy behavior ──
 let a = 10;
 let b = a;
 b = 20;
-console.log("Primitive copy — a:", a, "b:", b);
+console.log("Primitive copy - a:", a, "b:", b);
 
 let objA = { value: 10 };
 let objB = objA;
 objB.value = 20;
-console.log("Reference copy — objA.value:", objA.value, "objB.value:", objB.value);
+console.log("Reference copy - objA.value:", objA.value, "objB.value:", objB.value);
 
 // ── Type Coercion ──
 console.log("String + Number:", "5" + 3);
@@ -56,3 +56,4 @@ truthyValues.forEach((val) => console.log(`Truthy: ${String(val).padEnd(10)} →
 
 if ("Arun") console.log("'Arun' is truthy");
 if (0) console.log("This won't run");
+

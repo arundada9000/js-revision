@@ -1,4 +1,4 @@
-// JavaScript Scope & Closures — Lexical Scoping in Action
+// JavaScript Scope & Closures - Lexical Scoping in Action
 
 // ── Scope Levels ──
 const globalVar = "I'm global";
@@ -12,11 +12,11 @@ function outer() {
   }
 
   inner();
-  // console.log(innerVar); // ReferenceError — not in scope
+  // console.log(innerVar); // ReferenceError - not in scope
 }
 outer();
 
-// ── Block Scope — let vs var ──
+// ── Block Scope - let vs var ──
 if (true) {
   let blockLet = "let is block-scoped";
   var blockVar = "var is function-scoped";
@@ -24,7 +24,7 @@ if (true) {
 // console.log(blockLet); // ReferenceError
 console.log("var escapes block:", blockVar);
 
-// ── Closure — function remembers its lexical scope ──
+// ── Closure - function remembers its lexical scope ──
 function createGreeter(greeting) {
   return function (name) {
     console.log(`${greeting}, ${name}!`);
@@ -82,7 +82,7 @@ const account = createBankAccount(1000);
 account.deposit(500);
 account.withdraw(200);
 console.log("Final balance:", account.getBalance());
-// console.log(account.balance); // undefined — private!
+// console.log(account.balance); // undefined - private!
 
 // ── Closure in loops (var vs let) ──
 for (var i = 0; i < 3; i++) {
@@ -100,3 +100,4 @@ const double = multiply(2);
 const triple = multiply(3);
 console.log("Double 5:", double(5));
 console.log("Triple 5:", triple(5));
+

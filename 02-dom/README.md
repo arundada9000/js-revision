@@ -1,4 +1,4 @@
-# 02 — DOM Manipulation & Events
+# 02 - DOM Manipulation & Events
 
 Interactive browser-based examples for DOM manipulation and event handling.
 
@@ -12,3 +12,4 @@ Interactive browser-based examples for DOM manipulation and event handling.
 ## Run
 
 Open either file in a browser. No build tools needed.
+

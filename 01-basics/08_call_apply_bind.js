@@ -1,4 +1,4 @@
-// JavaScript call, apply, bind — Explicit `this` Binding
+// JavaScript call, apply, bind - Explicit `this` Binding
 
 const arun = { name: "Arun", city: "Butwal" };
 const sita = { name: "Sita", city: "Kathmandu" };
@@ -7,20 +7,20 @@ function introduce(greeting, punctuation) {
   console.log(`${greeting}, I'm ${this.name} from ${this.city}${punctuation}`);
 }
 
-// call — invoke immediately, args passed individually
+// call - invoke immediately, args passed individually
 introduce.call(arun, "Hi", "!");
 introduce.call(sita, "Namaste", ".");
 
-// apply — invoke immediately, args as array
+// apply - invoke immediately, args as array
 introduce.apply(arun, ["Hello", "!!"]);
 introduce.apply(sita, ["Hey", "!!"]);
 
-// bind — returns new function with bound this
+// bind - returns new function with bound this
 const arunIntro = introduce.bind(arun);
 arunIntro("Welcome", "!");
 arunIntro("Good morning", ".");
 
-// bind — partial application
+// bind - partial application
 const greetArun = introduce.bind(arun, "Hola");
 greetArun("?");
 greetArun("!");
@@ -62,3 +62,4 @@ const timer2 = {
   },
 };
 timer2.start();
+

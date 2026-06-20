@@ -4,7 +4,7 @@ A suggested path through this repository based on my learning journey.
 
 ## Phase 1: Foundations
 
-Start with the basics — get comfortable with data types, objects, arrays, and functions.
+Start with the basics - get comfortable with data types, objects, arrays, and functions.
 
 | File | Concepts |
 |------|----------|
@@ -16,7 +16,7 @@ Start with the basics — get comfortable with data types, objects, arrays, and 
 
 ## Phase 2: DOM & Events
 
-Move to the browser — understand how JavaScript interacts with the DOM.
+Move to the browser - understand how JavaScript interacts with the DOM.
 
 | File | Concepts |
 |------|----------|
@@ -25,7 +25,7 @@ Move to the browser — understand how JavaScript interacts with the DOM.
 
 ## Phase 3: Asynchronous JavaScript
 
-Master async patterns — the most critical skill for modern JS.
+Master async patterns - the most critical skill for modern JS.
 
 | File | Concepts |
 |------|----------|
@@ -40,4 +40,5 @@ Master async patterns — the most critical skill for modern JS.
 - Run `.js` files with `node <filename>`
 - Open `.html` files directly in a browser
 - Use the console (F12) to inspect output
-- Modify the code and see what breaks — that's how you learn
+- Modify the code and see what breaks - that's how you learn
+

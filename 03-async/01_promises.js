@@ -1,4 +1,4 @@
-// JavaScript Promises — Creation, Chaining, Composition
+// JavaScript Promises - Creation, Chaining, Composition
 
 // Basic Promise
 const promiseOne = new Promise((resolve, reject) => {
@@ -95,7 +95,7 @@ checkAge(17)
   .catch((err) => console.log(err))
   .finally(() => console.log("Promise ended"));
 
-// Chaining Promises — dependent async operations
+// Chaining Promises - dependent async operations
 function getUsers() {
   return new Promise((resolve, reject) => {
     resolve({ id: 1, name: "Arun" });
@@ -120,7 +120,7 @@ getUsers()
     console.log(err);
   });
 
-// Promise.all — wait for multiple promises
+// Promise.all - wait for multiple promises
 async function fetchMultipleUsers() {
   const [res1, res2] = await Promise.all([
     fetch("https://jsonplaceholder.typicode.com/users/1"),
@@ -135,7 +135,7 @@ async function fetchMultipleUsers() {
 }
 fetchMultipleUsers();
 
-// Promise.race — first settled promise wins
+// Promise.race - first settled promise wins
 function checkServer() {
   const mem = 0.4;
 
@@ -159,7 +159,7 @@ function checkServer() {
 }
 checkServer();
 
-// String prototype extension — checking for "Arun"
+// String prototype extension - checking for "Arun"
 String.prototype.containsArun = function () {
   console.log("String:", this.toString());
   if (this.toString().toLowerCase().includes("arun")) {
@@ -170,3 +170,4 @@ String.prototype.containsArun = function () {
 };
 "Hello Arun ji".containsArun();
 "This is just a test".containsArun();
+

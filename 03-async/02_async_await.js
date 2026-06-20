@@ -1,4 +1,4 @@
-// JavaScript Async/Await — Cleaner Promise Handling
+// JavaScript Async/Await - Cleaner Promise Handling
 
 // Using async/await with try/catch
 const promiseFive = new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ async function consumePromiseFive() {
 }
 consumePromiseFive();
 
-// Async chaining — getUsers then getPosts
+// Async chaining - getUsers then getPosts
 function getUsers() {
   return new Promise((resolve, reject) => {
     resolve({ id: 1, name: "Arun" });
@@ -87,3 +87,4 @@ async function getUsersFromAPI() {
   }
 }
 getUsersFromAPI();
+

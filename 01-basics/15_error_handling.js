@@ -1,4 +1,4 @@
-// JavaScript Error Handling — try, catch, finally, throw
+// JavaScript Error Handling - try, catch, finally, throw
 
 // Basic try/catch
 try {
@@ -91,3 +91,4 @@ function riskyOperation() {
   }
 }
 riskyOperation();
+

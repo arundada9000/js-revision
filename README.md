@@ -1,4 +1,4 @@
-# JavaScript Revision — Learning Journey
+# JavaScript Revision - Learning Journey
 
 > A structured collection of JavaScript examples, exercises, and interactive demos built during my JS revision journey. From variables and data types to async patterns, prototypes, classes, and DOM manipulation.
 
@@ -16,7 +16,7 @@
 
 ## Author
 
-**Arun Neupane** — Full-Stack Developer, CTO @ Sajilo Digital
+**Arun Neupane** - Full-Stack Developer, CTO @ Sajilo Digital
 
 - GitHub: [@arundada9000](https://github.com/arundada9000)
 - Portfolio: [arunneupane.netlify.app](https://arunneupane.netlify.app)
@@ -116,15 +116,15 @@ node 01-basics/00_variables.js
 ```
 
 ### HTML files
-Open in a browser directly — no build tools required.
+Open in a browser directly - no build tools required.
 
 ---
 
 ## Learning Path
 
-1. **Start with basics** (00 → 16) in order — each file builds on earlier ones
-2. **Move to DOM** — see JavaScript in the browser
-3. **Tackle async** — the most critical skill for modern JS
+1. **Start with basics** (00 → 16) in order - each file builds on earlier ones
+2. **Move to DOM** - see JavaScript in the browser
+3. **Tackle async** - the most critical skill for modern JS
 
 See [docs/learning-roadmap.md](docs/learning-roadmap.md) for details.
 
@@ -133,17 +133,18 @@ See [docs/learning-roadmap.md](docs/learning-roadmap.md) for details.
 ## Philosophy
 
 This repo documents learning in public. The code is deliberately:
-- **Self-documenting** — minimal comments, meaningful names
-- **Practical** — real patterns, not just syntax
-- **Progressive** — each file builds on earlier concepts
-- **Interactive** — HTML files are visual playgrounds
+- **Self-documenting** - minimal comments, meaningful names
+- **Practical** - real patterns, not just syntax
+- **Progressive** - each file builds on earlier concepts
+- **Interactive** - HTML files are visual playgrounds
 
 ---
 
 ## License
 
-MIT License — free and open source. Use, modify, and distribute however you want. See [LICENSE](LICENSE).
+MIT License - free and open source. Use, modify, and distribute however you want. See [LICENSE](LICENSE).
 
 ---
 
-*Revision completed June 20, 2026 — from variables to async, DOM to prototypes. Every topic covered, every example run.*
+*Revision completed June 20, 2026 - from variables to async, DOM to prototypes. Every topic covered, every example run.*
+

@@ -1,4 +1,4 @@
-// JavaScript Classes — ES6 Class Syntax
+// JavaScript Classes - ES6 Class Syntax
 
 class Person {
   constructor(name, age) {
@@ -38,7 +38,7 @@ class Student extends Person {
   }
 
   introduce() {
-    return `${super.introduce()} — Grade: ${this.grade}`;
+    return `${super.introduce()} - Grade: ${this.grade}`;
   }
 }
 
@@ -81,7 +81,7 @@ const acc = new BankAccount("Arun", 1000);
 acc.deposit(500);
 acc.withdraw(200);
 console.log("Balance:", acc.balance);
-// console.log(acc.#balance); // SyntaxError — private
+// console.log(acc.#balance); // SyntaxError - private
 
 // Getters and Setters
 class User {
@@ -103,3 +103,4 @@ const user = new User("Arun", "Neupane");
 console.log("Full name:", user.fullName);
 user.fullName = "Sita Sharma";
 console.log("Updated:", user.fullName);
+

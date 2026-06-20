@@ -1,10 +1,10 @@
-// JavaScript Arrow Functions — Syntax, Behavior, and When to Use
+// JavaScript Arrow Functions - Syntax, Behavior, and When to Use
 
 // Basic arrow syntax
 const greet = (name) => `Hello, ${name}!`;
 console.log("Arrow greet:", greet("Arun"));
 
-// Single param — parens optional
+// Single param - parens optional
 const square = (x) => x * x;
 console.log("Square 5:", square(5));
 
@@ -19,7 +19,7 @@ const fullName = (first, last) => {
 };
 console.log("Full name:", fullName("Arun", "Neupane"));
 
-// Returning objects — wrap in parens
+// Returning objects - wrap in parens
 const createUser = (name, age) => ({ name, age, active: true });
 console.log("Arrow object return:", createUser("Arun", 22));
 
@@ -62,3 +62,4 @@ const numbers = [1, 2, 3, 4, 5];
 console.log("Doubled:", numbers.map((n) => n * 2));
 console.log("Even:", numbers.filter((n) => n % 2 === 0));
 console.log("Sum:", numbers.reduce((a, b) => a + b, 0));
+

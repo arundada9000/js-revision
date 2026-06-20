@@ -12,7 +12,7 @@ Thank you for your interest! This is a personal learning repo, but contributions
 
 ## Guidelines
 
-- Keep code self-documenting — minimal comments, meaningful names
+- Keep code self-documenting - minimal comments, meaningful names
 - Follow the existing file structure and naming conventions
 - HTML files should be self-contained (no external dependencies)
 - JS files should run with just `node <filename>`
@@ -34,3 +34,4 @@ Open an issue with:
 - Expected vs actual behavior
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
+
